@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Tic-tac-toe</title>
+
+    <style>
+        table {
+            width: 135px;
+        }
+        tr, td {
+            width: 42px;
+            height: 42px;
+            border: 1px solid black;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            height: 42px;
+            width: 42px;
+        }
+        h2 {color: red;
+        }
+    </style>
+</head>
+
+<script>
+    "use strict";
+
+    var user = 1;
+    var winner = false;
+
+    function loadImage(sign, pos) {
+
+        switch (sign) {
+            case 'O':
+                document.getElementById(pos).innerHTML = "<img src='img/o.png' alt='O'/>";
+                break;
+            case 'X':
+                document.getElementById(pos).innerHTML = "<img src='img/x.png' alt='X'/>";
+                break;
+            case 'XG':
+                document.getElementById(pos).innerHTML = "<img src='img/xg.png' alt='XG'/>";
+                break;
+            case 'OG':
+                document.getElementById(pos).innerHTML = "<img src='img/og.png' alt='OG'/>";
+                break;
+            default:
+                document.getElementById(pos).innerHTML = "<img src='img/e.png' alt='E'/>";
+                break;
+        }
+    }
+
+    function changeImage(pos) {
+        if (!winner) {
+
+            var currpos = document.getElementById(pos).innerHTML;
+
+            if (currpos.indexOf("e.png") > 0) {
+                switch (user) {
+                    case 1:
+                        loadImage("X",pos);
+                        checkWinner(user, pos);
+                        user = 2;
+                        break;
+                    case 2:
+                        loadImage("O",pos);
+                        checkWinner(user, pos);
+                        user = 1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    function createTable() {
+        //body reference
+        var body = document.getElementsByTagName("body")[0];
+
+        var tbl = document.createElement("table");
+        var tblBody = document.createElement("tbody");
+
+        var t = 1;
+        for (var j = 1; j <= 3; j++) {
+            var row = document.createElement("tr");
+
+            for (var i = 1; i <= 3; i++) {
+                var cell = document.createElement("td");
+                    cell.setAttribute("id", t.toString());
+                    cell.setAttribute("onclick", "changeImage(\'" + t.toString() + "\')");
+                t++;
+
+                var img = document.createElement("img");
+                    img.setAttribute("src", "img/e.png");
+                    img.setAttribute("alt", "E");
+
+                cell.appendChild(img);
+
+                row.appendChild(cell);
+            }
+            tblBody.appendChild(row);
+        }
+        tbl.appendChild(tblBody);
+        body.appendChild(tbl);
+    }
+
+    function loadJSON(callback) {
+
+        var xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+        xobj.open('GET', 'rules/rules.json', true);
+        xobj.onreadystatechange = function () {
+            if (xobj.readyState == 4 && xobj.status == "200") {
+                // Required use of an anonymous callback as .open will NOT return a posue but simply returns undefined in asynchronous mode
+                callback(xobj.responseText);
+            }
+        };
+        xobj.send(null);
+    }
+
+    function checkWinner(usr, pos) {
+
+        loadJSON(function (response) {
+                    // Parse JSON string into object
+
+                    var obj = JSON.parse(response);
+                    for (var j = 1; j <= 9; j++) {
+
+                        //win[pos][direction][line] // obj.win[pos][j].length ??
+                        var myRule = [];
+                        for (var i = 0; i <= 2; i++) {
+                            myRule[i] = obj.win[pos][j][i].A;
+                        }
+
+                        if (
+                                (document.getElementById(myRule[0]).innerHTML == document.getElementById(myRule[1]).innerHTML) &&
+                                (document.getElementById(myRule[0]).innerHTML == document.getElementById(myRule[2]).innerHTML)
+                        ) {
+
+                            switch (usr) {
+                                case 1:
+                                    for (var i = 0; i <= 2; i++) {
+                                        loadImage("XG", myRule[i]);
+                                    }
+                                    break;
+                                case 2:
+                                    for (var i = 0; i <= 2; i++) {
+                                        loadImage("OG", myRule[i]);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            document.getElementById("winner").innerHTML = "We have a Winner! " + " Congratulations User " + usr + "!";
+                            winner = true;
+                            return;
+                        }
+
+                    }
+
+                }
+        )
+    }
+
+</script>
+
+<body onload="createTable();">
+
+<h1>Tic-tac-toe</h1>
+
+<h2 id="winner"></h2>
+
+</body>
+</html>

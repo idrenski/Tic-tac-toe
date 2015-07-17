@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>JS Tests</title>
+
+    <style>
+        table {
+            width: 135px;
+        }
+
+        tr, td {
+            width: 42px;
+            height: 42px;
+            border: 1px solid black;
+        }
+
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto
+        }
+
+    </style>
+</head>
+
+<script>
+    "use strict";
+
+    var PI;
+    PI = 3.14;
+
+    function printLineInDoc(name, value) {
+        document.write(name, value, '</br>')
+    }
+
+    function lpad(value, pad, slice) {
+        var vpad = (typeof pad === 'undefined' ? 0 : pad);
+        var vslice = (typeof slice === 'undefined' ? -2 : slice);
+
+        return (vpad.toString() + value).slice(vslice);
+    }
+
+    function currentTime() {
+
+        var monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        var dayNames = [
+            "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+        ];
+
+        var timeUTC = new Date();
+
+        // format example: Mon, 09 Mar 2015 12:25:12 GMT
+
+        return dayNames[timeUTC.getUTCDay() - 1] + ", " +
+                lpad(timeUTC.getDate()) + " " + monthNames[timeUTC.getUTCMonth()] + " " + timeUTC.getUTCFullYear() + " " +
+                lpad(timeUTC.getUTCHours()) + ":" + lpad(timeUTC.getUTCMinutes()) + ":" + lpad(timeUTC.getUTCSeconds()) + " " + "GMT";
+    }
+
+
+    var UTCs = currentTime();
+
+    function clickTime() {
+        printLineInDoc("UTC time: ", UTCs);
+        printLineInDoc("Local time: ", new Date());
+    }
+
+    function calcCircleArea(r) {
+        var s;
+        s = PI * Math.pow(r, 2); // r*r
+        return s;
+    }
+
+    function printCircleArea() {
+        printLineInDoc("r=" + 7, "    area=" + calcCircleArea(7));
+        printLineInDoc("r=" + 1.5, "  area=" + calcCircleArea(1.5));
+        printLineInDoc("r=" + 20, "   area=" + calcCircleArea(20));
+    }
+
+    function ResetPage() {
+        printLineInDoc("Click the button to reset the page ", "<button type='button' onClick='history.go(0)'>Reset button</button>");
+    }
+
+    function dec2hex(dec) {
+        var vdec = Number(dec);
+        return vdec.toString(16);
+    }
+
+    function printHex(dec) {
+        printLineInDoc(dec + "(10) = ", dec2hex(dec).toUpperCase() + " (16)");
+    }
+
+    function getTime() {
+        var timeLocal = new Date();
+
+        // document.getElementById("ShowTime").innerHTML = "Local Time is: ";
+        return lpad(timeLocal.getHours()) + ":" + lpad(timeLocal.getMinutes()) + ":" + lpad(timeLocal.getSeconds());
+    }
+
+    function timedRefresh(timeoutPeriod) {
+
+        setTimeout("location.reload(true);", timeoutPeriod);
+
+    }
+
+    var timer;
+    function startTimer(timePeriod) {
+        timer = setInterval(function () {
+            document.getElementById("ShowTime").innerHTML = "Local Time is: " + getTime();
+        }, timePeriod)
+    }
+
+    function drawSign(sign, val) {
+
+        if (sign == 'O') {
+            document.getElementById(val).innerHTML = "<img src='img/o.png' alt='O' height='42' width='42'/>";
+        }
+
+        if (sign == 'X') {
+            document.getElementById(val).innerHTML = "<img src='img/x.png' alt='X' height='42' width='42'/>";
+        }
+
+        if (sign == 'E') {
+            document.getElementById(val).innerHTML = "<img src='img/e.png' alt='E' height='42' width='42'/>";
+        }
+
+    }
+
+    var user = 1;
+    function changeImage(val) {
+        var currVal = document.getElementById(val).innerHTML;
+
+        if (user == 1) {
+            if (currVal.indexOf("empty.png") > 0) {
+                document.getElementById(val).innerHTML = "<img src='img/x.png' alt='X' height='42' width='42'/>";
+
+            }
+            user = 2;
+            return 1;
+        }
+
+        if (user == 2) {
+            if (currVal.indexOf("empty.png") > 0) {
+                document.getElementById(val).innerHTML = "<img src='img/o.png' alt='X' height='42' width='42'/>";
+
+            }
+            user = 1;
+            return 2;
+        }
+
+    }
+
+    console.log("Console Log: UTC " + UTCs);
+</script>
+
+<body>
+
+
+<button type="button" onmouseover="clickTime(); printCircleArea(); ResetPage();">Mouse me Over !</button>
+
+<form id="hexForm">
+
+    Enter a number:</br>
+    <input type="number" id="dec"/>
+
+    <button type="button" onclick="printHex(document.getElementById('hexForm').elements.namedItem('dec').value); ">OK
+    </button>
+    <button type="reset">Cancel</button>
+    </br>
+
+    <div id="ShowTime"> Local Time is:
+    </div>
+
+
+    <input type="button" onclick="startTimer(1000)" value="Start timer">
+    <input type="button" onclick="clearInterval(timer)" value="Stop timer">
+
+</form>
+
+<table>
+    <tr>
+        <td id="11" onclick="changeImage('11')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="12" onclick="changeImage('12')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="13" onclick="changeImage('13')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+    </tr>
+    <tr>
+        <td id="21" onclick="changeImage('21')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="22" onclick="changeImage('22')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="23" onclick="changeImage('23')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+    </tr>
+    <tr>
+        <td id="31" onclick="changeImage('31')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="32" onclick="changeImage('32')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+        <td id="33" onclick="changeImage('33')"><img src='img/e.png' alt='E' height='42' width='42'/></td>
+    </tr>
+</table>
+
+<!--
+<input type="button" onclick="drawSign('X','1','1')" value="11">
+<input type="button" onclick="drawSign('X','1','2')" value="22">
+<input type="button" onclick="drawSign('O','1','1')" value="11">
+<input type="button" onclick="drawSign('O','1','2')" value="22">
+-->
+
+</body>
+</html>
